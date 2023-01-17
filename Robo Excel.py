@@ -20,36 +20,26 @@ class Prog(FloatLayout):
         super().__init__(**kwargs)
 
     def mudatexto(self):
-        gt=''
 
-        self.ids.bt2.text="12343434"
-        self.ids.lb1.text = "12343434"
-        # self.ids.fl2.add_widget(FileChooser(pos_hint={"x": .0, "y": .0}, size_hint=[1, .8]))
-        self.caminho=FileChooserIconView(pos_hint={"x": .0, "y": .0}, size_hint=[1, .8])
-
-        try:
-
-            self.ids.fl2.add_widget(self.caminho)
+        self.caminho=FileChooserIconView(pos_hint={"x": .0, "y": .0}, size_hint=[1, .7])
+        self.btok = Button(text="OK", pos_hint={"x": .35, "y": .8}, size_hint=[.3, .1], on_release=lambda a='' : self.seleciona_arquivo())
 
 
-            print('Adicionou')
-        except:
-            self.ids.fl2.add_widget(self.caminho)
-            print(self.caminho)
-        return self.caminho
-    def mudatexto2(self):
+        self.ids.fl2.add_widget(self.btok)
+        self.ids.fl2.add_widget(self.caminho)
 
+        # return self.caminho
+
+    def seleciona_arquivo(self):
+        print(self.caminho.selection[0])
+        str_caminho_do_arquivo = self.caminho.selection
         print(self.caminho.selection)
+        arquivo = pd.read_excel(str_caminho_do_arquivo[0])
 
-    # def procura(self):
-    #
-    #     filename = filedialog.askopenfilename(initialdir="/",
-    #                                           title="Select a File",
-    #                                           filetypes=(("Excel",
-    #                                                       ".xlsx"),
-    #                                                      ("all files",
-    #                                                       ".")))
-    #     return filename
+        print(arquivo.iloc[20,0])
+
+        self.ids.fl2.remove_widget(self.btok)
+        self.ids.fl2.remove_widget(self.caminho)
 
 
 class Tela(App):
