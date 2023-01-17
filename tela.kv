@@ -1,16 +1,28 @@
-<Tarefa>
+<Prog>
     Button:
         text: 'Procure o Arquivo'
         size_hint: [.3, .1]
         pos_hint: {"x": .35, "y": .9}
         on_press: root.mudatexto()
         id: bt1
+    FloatLayout:
+        id: fl2
+        size_hint: [1, .7]
+        pos_hint: {"x": .0, "y": .2}
+
+        Button:
+            text: 'Botão 2'
+            size_hint: [.3, .1]
+            pos_hint: {"x": .35, "y": .9}
+            on_press: root.mudatexto()
+            id: bt2
 
     Label:
         text: 'abc'
         size_hint: [.2, .2]
-        pos_hint: {"x": .0, "y": .4}
+        pos_hint: {"x": .0, "y": .0}
         id: lb1
+
 #FloatLayout:
 #    FileChooserIconView:
 #        text: 'Procure o Arquivo'
