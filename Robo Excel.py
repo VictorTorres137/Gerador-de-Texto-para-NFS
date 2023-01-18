@@ -31,7 +31,7 @@ class Prog(FloatLayout):
 
         self.bt1 = Button(text='Procure o Arquivo', size_hint=[.3, .1], pos_hint={"x": .35, "y": .9})
         # self.bt1 = Button(text='Procure o Arquivo', size_hint=[.3, .1], pos_hint={"x": .35, "y": .9}, on_press=self.interface_procura)
-        self.bt1.bind(on_press=lambda a='' : self.interface_procura())
+        self.bt1.bind(on_release=lambda a='' : self.interface_procura())
         self.add_widget(self.bt1)
 
 
@@ -66,7 +66,7 @@ class Prog(FloatLayout):
 
         print(self.arquivo)
 
-        return self.arquivo
+        return 0
 
     def monta_informacao(self):
         # def __init__(self, num_orc, num_nf, cabc, desct, vencm, serv):
