@@ -16,7 +16,9 @@ from kivy.uix.filechooser import *
 # from openpyxl
 procura_arquivo_parent = aviso_selecione_arquivo_parent= "None"
 lista_servicos=[]
-string_final=''
+lista_selecionados=[]
+servc = []
+string_final=str_servicos=''
 
 class Info():
     def __init__(self, num_orc, num_nf, cabc, desct, vencm, *serv):
@@ -41,7 +43,7 @@ class Prog(FloatLayout):
 
         global procura_arquivo_parent
 
-        self.procura_arquivo = FileChooserListView(pos_hint={"x": .05, "y": .1}, size_hint=[.9, .3], filters=["*.xlsx"])
+        self.procura_arquivo = FileChooserListView(pos_hint={"x": .05, "y": .1}, size_hint=[.9, .7], filters=["*.xlsx"])
         self.btok = Button(text="OK", pos_hint={"x": .35, "y": .8}, size_hint=[.3, .1], on_press=lambda a='': self.seleciona_arquivo())
 
 
@@ -82,14 +84,14 @@ class Prog(FloatLayout):
 
 
     def monta_informacao(self):
-        global infos
+        global infos, servc
         print(self.arquivo.iloc[1, 6])
         # def __init__(self, num_orc, num_nf, cabc, desct, vencm, serv):
         infos=Info(num_orc = self.arquivo.iloc[1, 6], num_nf = self.arquivo.iloc[11, 2], cabc = self.arquivo.iloc[10, 1], desct = self.arquivo.iloc[34, 6], vencm = self.arquivo.iloc[34, 2])
 
-        servc=[]
+
         for g in range (12, 32):
-            di={'servico' : str(self.arquivo.iloc[g, 1]), 'valor' : self.arquivo.iloc[g, 6]}
+            di={'servico' : str(self.arquivo.iloc[g, 1]), 'valor' : str(self.arquivo.iloc[g, 6]), 'checkbox': ''}
             if str(self.arquivo.iloc[g, 1]) != 'nan' and str(self.arquivo.iloc[g, 6]) != 'nan':
                 servc.append(di)
 
@@ -107,7 +109,7 @@ class Prog(FloatLayout):
 
     def interface_servicos(self):
 
-        global infos, lista_servicos
+        global infos, lista_servicos, servc
         self.texto_instrucao = Label(text="Digite o número do pedido e marque os serviços desejados", pos_hint={"x": .35, "y": .75}, size_hint=[.3, .05])
         self.input_pedido=TextInput(text='', pos_hint={"x": .35, "y": .7}, size_hint=[.3, .05])
 
@@ -126,34 +128,62 @@ class Prog(FloatLayout):
             globals()[f"self.novo{str(n)}"] = Label(text=infos.serv[n]['servico'], pos_hint={"x": .1, "y": .65-(n/20)}, size_hint=[.3, .05], color = (213, 12, 43, 1))
             # globals()[f"self.novo2{str(n)}"] = CheckBox(pos_hint={"x": .3, "y": .7 - (n / 20)}, size_hint=[.3, .05], active=lambda a=str(n): self.estado_switch(a))
             globals()[f"self.novo2{str(n)}"] = CheckBox(pos_hint={"x": .3, "y": .65 - (n / 20)}, size_hint=[.3, .05])
-            lista_servicos.append({'Label' : globals()[f"self.novo{str(n)}"], 'Checkbox': globals()[f"self.novo2{str(n)}"]})
+
 
 
             self.add_widget(globals()[f"self.novo{str(n)}"])
             self.add_widget(globals()[f"self.novo2{str(n)}"])
 
-
-        self.btok2=Button(text="OK2", pos_hint={"x": .35, "y": .8}, size_hint=[.3, .1], on_press=lambda a='': self.monta_string_final())
+        self.btok2 = Button(text="OK2", pos_hint={"x": .35, "y": .8}, size_hint=[.3, .1], on_press=lambda a='': self.estado_switch())
+        # self.btok2=Button(text="OK2", pos_hint={"x": .35, "y": .8}, size_hint=[.3, .1], on_press=lambda a='': self.monta_string_final())
         self.add_widget(self.btok2)
         self.add_widget(self.input_pedido)
         self.add_widget(self.texto_instrucao)
 
     def estado_switch(self):
+        global lista_servicos, str_servicos, servc, lista_selecionados
 
-        global lista_servicos
+    # Remove os Widgets
+        for n in range(0, len(infos.serv)):
 
-        for j in lista_servicos:
-            print(j["Checkbox"].active)
+            self.remove_widget(globals()[f"self.novo{str(n)}"])
+            self.remove_widget(globals()[f"self.novo2{str(n)}"])
 
-        print(self.input_pedido.text)
+        self.remove_widget(self.btok2)
+        self.remove_widget(self.input_pedido)
+        self.remove_widget(self.texto_instrucao)
 
+#####
+    # Preenche o valor das CheckBox
+        for n in range(0, len(infos.serv)):
+            infos.serv[n]['checkbox'] = globals()[f"self.novo2{str(n)}"].active
+
+
+        print(infos.serv)
+
+        self.texto_NFS=TextInput(text="", pos_hint={"x": .1, "y": .1}, size_hint=[.8, .8])
+        self.add_widget(self.texto_NFS)
+
+        for j in infos.serv:
+
+            if j["checkbox"]:
+                str_servicos = f'{str_servicos}\n      ' \
+                               f'=> {j["servico"]} == {j["valor"]} '
+        print(str_servicos)
 
     def monta_string_final(self):
 
         global lista_servicos, string_final
 
+        for j in lista_servicos:
+            print(j)
+
+            str_servicos = f'{str_servicos}      ' \
+                           f'=> {j["Label"].text} == {j["valor"]} '
+
+
         string_final=f'''*** {infos.cabc} ***
-                        123213
+        123213
                         '''
 
         print(string_final)
