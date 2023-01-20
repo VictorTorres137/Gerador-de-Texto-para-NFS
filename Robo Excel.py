@@ -19,7 +19,7 @@ lista_servicos=[]
 lista_selecionados=[]
 servc = []
 string_final=str_servicos=''
-
+valor_total = 0
 class Info():
     def __init__(self, num_orc, num_nf, cabc, desct, vencm, *serv):
         self.num_orc = num_orc
@@ -141,7 +141,7 @@ class Prog(FloatLayout):
         self.add_widget(self.texto_instrucao)
 
     def estado_switch(self):
-        global lista_servicos, str_servicos, servc, lista_selecionados
+        global lista_servicos, str_servicos, servc, lista_selecionados, valor_total
 
     # Remove os Widgets
         for n in range(0, len(infos.serv)):
@@ -165,26 +165,26 @@ class Prog(FloatLayout):
         self.add_widget(self.texto_NFS)
 
         for j in infos.serv:
-
             if j["checkbox"]:
-                str_servicos = f'{str_servicos}\n      ' \
-                               f'=> {j["servico"]} == {j["valor"]} '
-        print(str_servicos)
+                valor_total += int(j["valor"])
 
+                str_servicos = f'{str_servicos}\n      ' \
+                               f'=> {j["servico"]} == R${str(round(int(j["valor"]),2))} '
+        print(str_servicos)
+        print(valor_total)
+        self.monta_string_final()
     def monta_string_final(self):
 
-        global lista_servicos, string_final
-
-        for j in lista_servicos:
-            print(j)
-
-            str_servicos = f'{str_servicos}      ' \
-                           f'=> {j["Label"].text} == {j["valor"]} '
+        global lista_servicos, string_final, valor_total
 
 
-        string_final=f'''*** {infos.cabc} ***
-        123213
-                        '''
+
+        string_final=f'*** {infos.cabc} ***' \
+                     f'{str_servicos}\n' \
+                     f'*** Valor Total R${round(valor_total,2)}'
+
+
+
 
         print(string_final)
 
