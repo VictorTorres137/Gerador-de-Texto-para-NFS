@@ -8,7 +8,7 @@ from kivy.uix.button import Button
 from kivy.uix.label import Label
 from kivy.uix.switch import Switch
 from kivy.uix.checkbox import CheckBox
-from kivy.uix.togglebutton import ToggleButton
+from kivy.uix.textinput import TextInput
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.filechooser import *
 
@@ -16,6 +16,7 @@ from kivy.uix.filechooser import *
 # from openpyxl
 procura_arquivo_parent = aviso_selecione_arquivo_parent= "None"
 lista_servicos=[]
+string_final=''
 
 class Info():
     def __init__(self, num_orc, num_nf, cabc, desct, vencm, *serv):
@@ -107,7 +108,8 @@ class Prog(FloatLayout):
     def interface_servicos(self):
 
         global infos, lista_servicos
-
+        self.texto_instrucao = Label(text="Digite o número do pedido e marque os serviços desejados", pos_hint={"x": .35, "y": .75}, size_hint=[.3, .05])
+        self.input_pedido=TextInput(text='', pos_hint={"x": .35, "y": .7}, size_hint=[.3, .05])
 
         #
         # for k in range(0, len(infos.serv)):
@@ -121,9 +123,9 @@ class Prog(FloatLayout):
 
         for n in range(0, len(infos.serv)):
 
-            globals()[f"self.novo{str(n)}"] = Label(text=infos.serv[n]['servico'], pos_hint={"x": .1, "y": .7-(n/20)}, size_hint=[.3, .05])
+            globals()[f"self.novo{str(n)}"] = Label(text=infos.serv[n]['servico'], pos_hint={"x": .1, "y": .65-(n/20)}, size_hint=[.3, .05], color = (213, 12, 43, 1))
             # globals()[f"self.novo2{str(n)}"] = CheckBox(pos_hint={"x": .3, "y": .7 - (n / 20)}, size_hint=[.3, .05], active=lambda a=str(n): self.estado_switch(a))
-            globals()[f"self.novo2{str(n)}"] = CheckBox(pos_hint={"x": .3, "y": .7 - (n / 20)}, size_hint=[.3, .05])
+            globals()[f"self.novo2{str(n)}"] = CheckBox(pos_hint={"x": .3, "y": .65 - (n / 20)}, size_hint=[.3, .05])
             lista_servicos.append({'Label' : globals()[f"self.novo{str(n)}"], 'Checkbox': globals()[f"self.novo2{str(n)}"]})
 
 
@@ -131,8 +133,10 @@ class Prog(FloatLayout):
             self.add_widget(globals()[f"self.novo2{str(n)}"])
 
 
-        self.btok2=Button(text="OK2", pos_hint={"x": .35, "y": .8}, size_hint=[.3, .1], on_press=lambda a='': self.estado_switch())
+        self.btok2=Button(text="OK2", pos_hint={"x": .35, "y": .8}, size_hint=[.3, .1], on_press=lambda a='': self.monta_string_final())
         self.add_widget(self.btok2)
+        self.add_widget(self.input_pedido)
+        self.add_widget(self.texto_instrucao)
 
     def estado_switch(self):
 
@@ -141,6 +145,18 @@ class Prog(FloatLayout):
         for j in lista_servicos:
             print(j["Checkbox"].active)
 
+        print(self.input_pedido.text)
+
+
+    def monta_string_final(self):
+
+        global lista_servicos, string_final
+
+        string_final=f'''*** {infos.cabc} ***
+                        123213
+                        '''
+
+        print(string_final)
 
 class Tela(App):
     def build(self):
