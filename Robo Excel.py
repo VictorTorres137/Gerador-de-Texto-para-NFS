@@ -111,8 +111,8 @@ class Prog(FloatLayout):
 
 
         for g in range (12, 32):
-            dicionario_provisorio={'servico' : str(self.arquivo.iloc[g, 1]), 'valor' : str(self.arquivo.iloc[g, 6]), 'checkbox': ''}
-            if str(self.arquivo.iloc[g, 1]) != 'nan' and str(self.arquivo.iloc[g, 6]) != 'nan':
+            dicionario_provisorio={'quantidade' : (self.arquivo.iloc[g, 0]), 'servico' : str(self.arquivo.iloc[g, 1]), 'valor' : (self.arquivo.iloc[g, 6]), 'checkbox': '', 'total parcial': ((self.arquivo.iloc[g, 0])*(self.arquivo.iloc[g, 6]))}
+            if str(self.arquivo.iloc[g, 0]) != 'nan' and str(self.arquivo.iloc[g, 1]) != 'nan' and str(self.arquivo.iloc[g, 6]) != 'nan':
                 servc.append(dicionario_provisorio)
 
         for n in range (0, len(servc)):
@@ -188,10 +188,10 @@ class Prog(FloatLayout):
 
         for j in self.informacoes_do_texto.serv:
             if j["checkbox"]:
-                valor_total += int(j["valor"])
+                valor_total += (int(j["valor"]))*(int(j["quantidade"]))
 
                 str_servicos = f'{str_servicos}\n      ' \
-                               f'=> {j["servico"]} == R${str(round(int(j["valor"]),2))} '
+                               f'=> {j["quantidade"]:,.0f} => {j["servico"]} R$ {j["valor"]:,.2f} Total == R$ {j["total parcial"]:,.2f}'
         print(str_servicos)
         print(valor_total)
         self.monta_string_final()
@@ -201,20 +201,17 @@ class Prog(FloatLayout):
 
         global lista_servicos, string_final, valor_total
 
-
-
         string_final=f'*** {self.informacoes_do_texto.cabecalho} ***' \
                      f'{str_servicos}\n' \
-                     f'*** Valor Total R${round(valor_total,2)}'
+                     f'*** Valor Total R$ {valor_total:,.2f}'
 
+        # print(string_final)
 
+        self.texto_NFS.text=string_final
 
-
-        print(string_final)
 
 class Tela(App):
     def build(self):
         return Prog()
-
 
 Tela().run()
