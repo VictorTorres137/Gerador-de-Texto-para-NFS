@@ -11,6 +11,9 @@ from kivy.uix.checkbox import CheckBox
 from kivy.uix.textinput import TextInput
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.filechooser import *
+from datetime import date
+from datetime import date, timedelta
+
 
 
 # from openpyxl
@@ -47,14 +50,6 @@ class Prog(FloatLayout):
         # Remove os Widgets
         self.clear_widgets()
         self.add_widget(self.bt_procure_o_arquivo)
-        # if len(self.informacoes_do_texto.serv) > 0:
-        #     for n in range(0, len(self.informacoes_do_texto.serv)):
-        #         self.remove_widget(globals()[f"self.label_servico{str(n)}"])
-        #         self.remove_widget(globals()[f"self. checkbox{str(n)}"])
-        #
-        #     self.remove_widget(self.botao_confirma_selecao)
-        #     self.remove_widget(self.input_pedido)
-        #     self.remove_widget(self.texto_instrucao)
 
         self.bt_procure_o_arquivo.disabled = True
 
@@ -72,9 +67,6 @@ class Prog(FloatLayout):
     def seleciona_arquivo(self):
 
         global procura_arquivo_parent, aviso_selecione_arquivo_parent
-
-
-        print(len(self.procura_arquivo.selection))
 
 
         if len(self.procura_arquivo.selection) == 1:
@@ -97,7 +89,7 @@ class Prog(FloatLayout):
                 self.aviso_selecione_arquivo=Label(text='Selecione um arquivo', pos_hint={"x": .35, "y": .7}, size_hint=[.3, .1])
                 self.add_widget(self.aviso_selecione_arquivo)
                 aviso_selecione_arquivo_parent = "Já exixte"
-                print('selecione um arquivo')
+
 
 
     def monta_informacao(self):
@@ -105,8 +97,6 @@ class Prog(FloatLayout):
         self.bt_procure_o_arquivo.disabled = False
         servc.clear()
 
-        print(self.arquivo.iloc[1, 6])
-        # def __init__(self, numero_orçamento, numero_nota, cabecalho, desconto, vencimento, serv):
         self.informacoes_do_texto=Info(numero_orçamento = self.arquivo.iloc[1, 6], numero_nota = self.arquivo.iloc[11, 2], cabecalho = self.arquivo.iloc[10, 1], desconto = self.arquivo.iloc[34, 6], vencimento = self.arquivo.iloc[34, 2])
 
 
@@ -115,47 +105,33 @@ class Prog(FloatLayout):
             if str(self.arquivo.iloc[g, 0]) != 'nan' and str(self.arquivo.iloc[g, 1]) != 'nan' and str(self.arquivo.iloc[g, 6]) != 'nan':
                 servc.append(dicionario_provisorio)
 
-        for n in range (0, len(servc)):
-            print(servc[n]['servico'], end='==')
-            print(servc[n]['valor'])
-
 
         self.informacoes_do_texto.serv=servc
-
-        print(self.informacoes_do_texto.serv)
 
         self.interface_servicos()
 
 
     def interface_servicos(self):
 
-        global lista_servicos, servc
+        global lista_servicos, servc, valor_total
+
+        str_servicos=''
+        valor_total=0
+
         self.texto_instrucao = Label(text="Digite o número do pedido e marque os serviços desejados", pos_hint={"x": .35, "y": .75}, size_hint=[.3, .05])
         self.input_pedido=TextInput(text='', pos_hint={"x": .35, "y": .7}, size_hint=[.3, .05])
-
-        #
-        # for k in range(0, len(self.informacoes_do_texto.serv)):
-        #     globals()[f"self.label_servico{str(k)}"] = Label()
-        #     globals()[f"self. checkbox{str(k)}"] = CheckBox()
-        #
-        #     # lista_servicos.append(globals()[f"self.label_servico{str(k)}"])
-        #     lista_servicos.append(globals()[f"self. checkbox{str(k)}"])
-
 
 
         for n in range(0, len(self.informacoes_do_texto.serv)):
 
             globals()[f"self.label_servico{str(n)}"] = Label(text=self.informacoes_do_texto.serv[n]['servico'], pos_hint={"x": .1, "y": .65-(n/30)}, size_hint=[.3, .03], color = (213, 12, 43, 1))
-            # globals()[f"self. checkbox{str(n)}"] = CheckBox(pos_hint={"x": .3, "y": .7 - (n / 20)}, size_hint=[.3, .05], active=lambda a=str(n): self.estado_switch(a))
             globals()[f"self. checkbox{str(n)}"] = CheckBox(pos_hint={"x": .3, "y": .65 - (n / 30)}, size_hint=[.3, .03])
-
-
 
             self.add_widget(globals()[f"self.label_servico{str(n)}"])
             self.add_widget(globals()[f"self. checkbox{str(n)}"])
 
         self.botao_confirma_selecao = Button(text="OK2", pos_hint={"x": .35, "y": .8}, size_hint=[.3, .1], on_press=lambda a='': self.estado_switch())
-        # self.botao_confirma_selecao=Button(text="OK2", pos_hint={"x": .35, "y": .8}, size_hint=[.3, .1], on_press=lambda a='': self.monta_string_final())
+
         self.add_widget(self.botao_confirma_selecao)
         self.add_widget(self.input_pedido)
         self.add_widget(self.texto_instrucao)
@@ -176,36 +152,43 @@ class Prog(FloatLayout):
 #####
     # Preenche o valor das CheckBox
         for n in range(0, len(self.informacoes_do_texto.serv)):
-            print(globals()[f"self. checkbox{str(n)}"])
-            print(globals()[f"self. checkbox{str(n)}"].active)
+
             self.informacoes_do_texto.serv[n]['checkbox'] = globals()[f"self. checkbox{str(n)}"].active
 
 
-        print(self.informacoes_do_texto.serv)
-
         self.texto_NFS=TextInput(text="", pos_hint={"x": .1, "y": .1}, size_hint=[.8, .8])
         self.add_widget(self.texto_NFS)
+
+
+        self.monta_string_final()
+
+
+    def monta_string_final(self):
+
+        global lista_servicos, string_final, valor_total, str_servicos
 
         for j in self.informacoes_do_texto.serv:
             if j["checkbox"]:
                 valor_total += (int(j["valor"]))*(int(j["quantidade"]))
 
                 str_servicos = f'{str_servicos}\n      ' \
-                               f'=> {j["quantidade"]:,.0f} => {j["servico"]} R$ {j["valor"]:,.2f} Total == R$ {j["total parcial"]:,.2f}'
-        print(str_servicos)
-        print(valor_total)
-        self.monta_string_final()
+                               f'=> {j["quantidade"]:02,.0f} => {j["servico"]} R$ {j["valor"]:,.2f} Total == R$ {j["total parcial"]:,.2f}'
 
 
-    def monta_string_final(self):
+        lista_de_prazos = list(map(int, (self.informacoes_do_texto.vencimento.split('/'))))
 
-        global lista_servicos, string_final, valor_total
 
-        string_final=f'*** {self.informacoes_do_texto.cabecalho} ***' \
-                     f'{str_servicos}\n' \
-                     f'*** Valor Total R$ {valor_total:,.2f}'
+        prazos_texto ='      => Pagamentos: '
 
-        # print(string_final)
+        for j in lista_de_prazos:
+
+            prazos_texto=f'{prazos_texto}{((date.today()) + (timedelta(j))).strftime("%d/%m/%y")}  '
+
+        string_final=f'*** {self.informacoes_do_texto.cabecalho} ***\n' \
+                     f'{str_servicos}\n\n' \
+                     f'*** Valor Total R$ {valor_total:,.2f} ***\n\n' \
+                     f'{prazos_texto}\n\n' \
+                     f'*** {self.informacoes_do_texto.numero_orçamento} // Pedido:{self.input_pedido.text} // NF:{self.informacoes_do_texto.numero_nota} ***'
 
         self.texto_NFS.text=string_final
 
