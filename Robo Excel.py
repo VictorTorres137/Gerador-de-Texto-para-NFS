@@ -134,8 +134,8 @@ class Prog(FloatLayout):
         # Define e adiciona todos os serviços em "self.informacoes_do_texto.serv" na tela
         for n in range(0, len(self.informacoes_do_texto.serv)):
 
-            globals()[f"self.label_servico{str(n)}"] = Label(text=self.informacoes_do_texto.serv[n]['servico'], pos_hint={"x": .1, "y": .65-(n/30)}, size_hint=[.3, .03], color = (213, 12, 43, 1))
-            globals()[f"self. checkbox{str(n)}"] = CheckBox(pos_hint={"x": .3, "y": .65 - (n / 30)}, size_hint=[.3, .03])
+            globals()[f"self.label_servico{str(n)}"] = Label(text=self.informacoes_do_texto.serv[n]['servico'], pos_hint={"x": .3, "y": .65-(n/30)}, size_hint=[.3, .03], color = (213, 12, 43, 1))
+            globals()[f"self. checkbox{str(n)}"] = CheckBox(pos_hint={"x": .6, "y": .65 - (n / 30)}, size_hint=[.1, .03])
 
 
             self.add_widget(globals()[f"self.label_servico{str(n)}"])
