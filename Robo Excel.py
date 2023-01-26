@@ -99,7 +99,7 @@ class Prog(FloatLayout):
         # Garante que a lista de serviços esta vazia
         servc.clear()
 
-        self.informacoes_do_texto=Info(numero_orçamento = self.arquivo.iloc[1, 7], numero_nota = self.arquivo.iloc[11, 3], cabecalho = str(self.arquivo.iloc[10, 2]), desconto = self.arquivo.iloc[34, 7], vencimento = self.arquivo.iloc[34, 2])
+        self.informacoes_do_texto=Info(numero_orçamento = self.arquivo.iloc[1, 6], numero_nota = self.arquivo.iloc[11, 3], cabecalho = str(self.arquivo.iloc[10, 1]), desconto = self.arquivo.iloc[34, 7], vencimento = self.arquivo.iloc[34, 2])
 
         # Adiciona as informações dos serviços na lista e depois coloca a lista no objeto "self.informacoes_do_texto"
 
@@ -107,7 +107,7 @@ class Prog(FloatLayout):
 
 
         for g in range (12, 32):
-            dicionario_provisorio={'quantidade' : (self.arquivo.iloc[g, 1]), 'servico' : str(self.arquivo.iloc[g, 2]), 'valor' : (self.arquivo.iloc[g, 7]), 'checkbox': '', 'total parcial': ((self.arquivo.iloc[g, 0])*(self.arquivo.iloc[g, 6]))}
+            dicionario_provisorio={'quantidade' : (self.arquivo.iloc[g, 1]), 'servico' : str(self.arquivo.iloc[g, 2]), 'valor' : (self.arquivo.iloc[g, 7]), 'checkbox': '', 'total parcial': ((self.arquivo.iloc[g, 1])*(self.arquivo.iloc[g, 7]))}
             if str(self.arquivo.iloc[g, 1]) != 'nan' and str(self.arquivo.iloc[g, 2]) != 'nan' and str(self.arquivo.iloc[g, 7]) != 'nan':
                 servc.append(dicionario_provisorio)
 
